@@ -47,7 +47,30 @@ export default function Minefield(props: { options: Options }) {
 
     return copy;
   };
-  const checkCoords = (e: React.MouseEvent) => {
+  const startGame = (e: React.MouseEvent) => {
+    // TO DO: loop over tiles, check and mark how many mines are located adjacently to it
+    let currentCoords = getCoords(e)
+
+    if (field) {
+      setField(addMines(field, parseInt(props.options.mines), currentCoords));
+      setGameStart(true);
+    }
+  };
+  const findAdjacent = (
+    coords: { x: number; y: number },
+    currentCoords: { x: number; y: number }
+  ) => {
+    if (
+      (currentCoords.x === coords.x ||
+        currentCoords.x === coords.x + 1 ||
+        currentCoords.x === coords.x - 1) &&
+      (currentCoords.y === coords.y ||
+        currentCoords.y === coords.y + 1 ||
+        currentCoords.y === coords.y - 1)
+    )
+      return true;
+  };
+  const getCoords = (e: React.MouseEvent)=>{
     let currentTile = e.currentTarget.children[0].innerHTML;
     let xRegex = currentTile.slice(0, 4).match(/[0-9]/g);
     let yRegex = currentTile.slice(4, 9).match(/[0-9]/g);
@@ -65,37 +88,21 @@ export default function Minefield(props: { options: Options }) {
     if (yRegex?.length === 1) {
       y = yRegex[0];
     }
-
+    
     let currentCoords = { x: parseInt(x as string), y: parseInt(y as string) };
+    return currentCoords
+  }
+  const checkTile = (e: React.MouseEvent) =>{
+    let currentCoords = getCoords(e)
+    let mined 
+    mined = field?.filter((el)=> {if(el.coords.x == currentCoords.x && el.coords.y == currentCoords.y){
+      return el
+    }})
+    
+      //TO DO: set 'display' state in array
+    
+  }
 
-    //to do: generate mines on 1st click and make sure that there are no adjacent mines
-    if (field) {
-      setField(addMines(field, parseInt(props.options.mines), currentCoords));
-      setGameStart(true);
-    }
-  };
-  const findAdjacent = (
-    coords: { x: number; y: number },
-    currentCoords: { x: number; y: number }
-  ) => {
-    console.log(
-      (currentCoords.x === coords.x ||
-        currentCoords.x === coords.x + 1 ||
-        currentCoords.x === coords.x - 1) &&
-        (currentCoords.y === coords.y ||
-          currentCoords.y === coords.y + 1 ||
-          currentCoords.y === coords.y - 1)
-    );
-    if (
-      (currentCoords.x === coords.x ||
-        currentCoords.x === coords.x + 1 ||
-        currentCoords.x === coords.x - 1) &&
-      (currentCoords.y === coords.y ||
-        currentCoords.y === coords.y + 1 ||
-        currentCoords.y === coords.y - 1)
-    )
-      return true;
-  };
   useEffect(() => {
     setField(produceField(props.options.x, props.options.y));
   }, [props]);
@@ -111,14 +118,26 @@ export default function Minefield(props: { options: Options }) {
         className={`grid w-fit m-1 grid-cols-[repeat(${props.options.y},16px)] p-1  border-2 border-solid border-b-stone-700 border-r-stone-700  border-l-stone-200  border-t-stone-200`}
       >
         {field ? (
-          field.map((el, index) => (
-            <Tile
-              mine={el.mine}
-              coords={el.coords}
-              key={index}
-              startFn={checkCoords}
-            />
-          ))
+          <>
+            {" "}
+            {!gameStart
+              ? field.map((el, index) => (
+                  <Tile
+                    mine={el.mine}
+                    coords={el.coords}
+                    key={index}
+                    handleClick={startGame}
+                  />
+                ))
+              : field.map((el, index) => (
+                  <Tile
+                    mine={el.mine}
+                    coords={el.coords}
+                    key={index}
+                    handleClick={checkTile}
+                  />
+                ))}
+          </>
         ) : (
           <></>
         )}

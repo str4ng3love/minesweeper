@@ -4,46 +4,49 @@ import { Options } from "./Game";
 import Tile from "./Tile";
 import { useEffect, useState } from "react";
 
-
 export default function Minefield(props: { options: Options }) {
   const [field, setField] = useState<
-    { coords: { x: number; y: number }; mine: boolean, adjacentMines:number }[]
+    {
+      mine: boolean;
+      adjacentMines: number;
+    }[][]
   >([]);
   const [gameStart, setGameStart] = useState(false);
 
   const produceField = (x: string, y: string) => {
-    let arr = [];
+    let arr: { mine: boolean; adjacentMines: number }[][] = [[]];
     for (let i = 0; i < parseInt(x); i++) {
+      arr[i] = [];
       for (let j = 0; j < parseInt(y); j++) {
-        arr.push({ coords: { x: i, y: j }, mine: false, adjacentMines: 0});
+        arr[i][j] = { mine: false, adjacentMines: 0 };
       }
     }
+
     return arr;
   };
   const addMines = (
-    arr: { coords: { x: number; y: number }; mine: boolean, adjacentMines:number }[],
+    arr: { mine: boolean; adjacentMines: number }[][],
     step: number,
     startingTile: { x: number; y: number }
   ) => {
-    let copy: { coords: { x: number; y: number }; mine: boolean, adjacentMines:number }[] =
-      JSON.parse(JSON.stringify(arr));
+    let copy: { mine: boolean; adjacentMines: number }[][] = JSON.parse(
+      JSON.stringify(arr)
+    );
 
-    copy.map((el) => (el.mine = false));
+    // copy.map((el) => (el.map(el => el.mine = false)));
 
-    for (let i = step - 1; i > 0; i--) {
-      let index = Math.floor(Math.random() * copy.length);
+    for (let i = step; i > 0; i--) {
+      let indexX = Math.floor(Math.random() * copy.length);
+      let indexY = Math.floor(Math.random() * copy[0].length);
 
-      if (copy[index].mine === true) {
+      if (copy[indexX][indexY].mine === true) {
         i++;
-      } else if (
-        copy[index].coords.x === startingTile.x &&
-        copy[index].coords.y === startingTile.y
-      ) {
+      } else if (indexX === startingTile.x && indexY === startingTile.y) {
         i++;
-      } else if (findAdjacent(copy[index].coords, startingTile)) {
+      } else if (findAdjacent({ x: indexX, y: indexY }, startingTile)) {
         i++;
       } else {
-        copy[index].mine = true;
+        copy[indexX][indexY].mine = true;
       }
     }
 
@@ -59,8 +62,6 @@ export default function Minefield(props: { options: Options }) {
           addMines(field, parseInt(props.options.mines), currentCoords)
         )
       );
-
-      // paintTheMinefield(field)
 
       setGameStart(true);
     }
@@ -102,42 +103,37 @@ export default function Minefield(props: { options: Options }) {
     let currentCoords = { x: parseInt(x as string), y: parseInt(y as string) };
     return currentCoords;
   };
-  
+  // add logic after the game has started here
+
   const checkTile = (e: React.MouseEvent) => {
     let currentCoords = getCoords(e);
-    let mined;
-    mined = field?.filter((el) => {
-      if (el.coords.x == currentCoords.x && el.coords.y == currentCoords.y) {
-        return el;
-      }
-    });
 
-    //TO DO: set 'display' state in array
+    console.log(currentCoords);
   };
 
+  //find adjacent tiles and add amount of mines nearby
   const paintTheMinefield = (
-    minefield: { coords: { x: number; y: number }; mine: boolean, adjacentMines: number }[]
+    minefield: { mine: boolean; adjacentMines: number }[][]
   ) => {
-    console.log("running");
     for (let i = 0; i < minefield.length; i++) {
-      
-      // somehow iterate over the array marking adjacent elements
-      if (minefield[i].mine === true) {
-        let x = minefield[i].coords.x
-        let y = minefield[i].coords.y
-        for (let j = -1; j < 2; j++) {
-          
+      for (let j = 0; j < minefield[i].length; j++) {
+        if (minefield[i][j].mine === true) {
           for (let k = -1; k < 2; k++) {
-            //find adjacent tiles and add amount of mines nearby
-            let adjacentTile =  minefield.find(el => el.coords.x === x-j && el.coords.y === y-k)
-            if(adjacentTile){
-              adjacentTile.adjacentMines += 1
+            for (let l = -1; l < 2; l++) {
+              if(minefield[i+k]!== undefined && minefield[i+k][j+l]!==undefined){
+                minefield[i + k][j + l].adjacentMines += 1;
+              }
+              
+              // if (!minefield[i + k][j + l].mine) {
+                // }
+              }
             }
           }
         }
       }
-    }
+      console.log(minefield)
 
+  
     return minefield;
   };
   useEffect(() => {
@@ -156,26 +152,29 @@ export default function Minefield(props: { options: Options }) {
       >
         {field ? (
           <>
-            {" "}
             {!gameStart
-              ? field.map((el, index) => (
-                  <Tile
-                    mine={el.mine}
-                    coords={el.coords}
-                    key={index}
-                    handleClick={startGame}
-                    adjacentMines={el.adjacentMines}
-                  />
-                ))
-              : field.map((el, index) => (
-                  <Tile
-                    mine={el.mine}
-                    coords={el.coords}
-                    key={index}
-                    handleClick={checkTile}
-                    adjacentMines={el.adjacentMines}
-                  />
-                ))}
+              ? field.map((el, indexX) =>
+                  el.map((el, indexY) => (
+                    <Tile
+                      mine={el.mine}
+                      coords={{ x: indexX, y: indexY }}
+                      key={crypto.randomUUID()}
+                      handleClick={startGame}
+                      adjacentMines={el.adjacentMines}
+                    />
+                  ))
+                )
+              : field.map((el, indexX) =>
+                  el.map((el, indexY) => (
+                    <Tile
+                      mine={el.mine}
+                      coords={{ x: indexX, y: indexY }}
+                      key={crypto.randomUUID()}
+                      handleClick={checkTile}
+                      adjacentMines={el.adjacentMines}
+                    />
+                  ))
+                )}
           </>
         ) : (
           <></>

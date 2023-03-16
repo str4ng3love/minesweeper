@@ -17,7 +17,7 @@ export default function Game() {
     <>
       <div className="flex flex-col max-w-fit">
         <Menu getOptions={getOptions} />
-        {gameOptions ?  <Minefield options={gameOptions as Options} /> :<></>}
+        {gameOptions ?  <Minefield options={gameOptions as Options} /> :<>Loading...</>}
        
       </div>
     </>

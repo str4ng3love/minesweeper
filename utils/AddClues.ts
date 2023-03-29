@@ -1,5 +1,6 @@
 export const AddClues = (
   minefield: {
+    marked: boolean;
     show: boolean;
     mine: boolean;
     adjacentMines: number;

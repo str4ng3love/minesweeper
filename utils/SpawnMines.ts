@@ -1,5 +1,6 @@
 export const SpawnMines = (
   arr: {
+    marked: boolean;
     show: boolean;
     mine: boolean;
     adjacentMines: number;
@@ -9,6 +10,7 @@ export const SpawnMines = (
   startingTile: { x: number; y: number }
 ) => {
   let copy: {
+    marked: boolean;
     show: boolean;
     mine: boolean;
     adjacentMines: number;

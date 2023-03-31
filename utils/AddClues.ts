@@ -1,10 +1,6 @@
+import { Minefield } from "@/app/components/Minefield";
 export const AddClues = (
-  minefield: {
-    marked: boolean;
-    show: boolean;
-    mine: boolean;
-    adjacentMines: number;
-  }[][]
+  minefield: Minefield[][]
 ) => {
   for (let i = 0; i < minefield.length; i++) {
     for (let j = 0; j < minefield[i].length; j++) {

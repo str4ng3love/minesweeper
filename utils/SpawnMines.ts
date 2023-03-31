@@ -1,20 +1,12 @@
+import { Minefield } from "@/app/components/Minefield";
 export const SpawnMines = (
-  arr: {
-    marked: boolean;
-    show: boolean;
-    mine: boolean;
-    adjacentMines: number;
-  }[][],
+  arr: Minefield[][],
 
   step: number,
   startingTile: { x: number; y: number }
 ) => {
-  let copy: {
-    marked: boolean;
-    show: boolean;
-    mine: boolean;
-    adjacentMines: number;
-  }[][] = JSON.parse(
+  let copy: 
+    Minefield[][] = JSON.parse(
     JSON.stringify(arr)
   );
 

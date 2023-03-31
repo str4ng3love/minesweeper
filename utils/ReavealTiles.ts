@@ -1,10 +1,6 @@
+import { Minefield } from "@/app/components/Minefield";
 export const RevealTile = (
-  array: {
-    marked: boolean;
-    show: boolean;
-    mine: boolean;
-    adjacentMines: number;
-  }[][],
+  array: Minefield[][],
   coords: { x: number; y: number }
 ) => {
   if (
@@ -13,15 +9,18 @@ export const RevealTile = (
     coords.y > array[0].length - 1 ||
     coords.y < 0
   ) {
-    return array;
+    return array
   }
   if (array[coords.x][coords.y].mine === true) {
     revealAll(array);
-    return array;
-  } else if(array[coords.x][coords.y].marked === true){ return array} else if (array[coords.x][coords.y].adjacentMines > 0) {
+    mineHit = true
+    return array
+  } else if (array[coords.x][coords.y].marked === true) {
+     return array
+  } else if (array[coords.x][coords.y].adjacentMines > 0) {
     array[coords.x][coords.y].show = true;
-    return array;
-  } else if(array[coords.x][coords.y].show === false) {
+     return array
+  } else if (array[coords.x][coords.y].show === false) {
     array[coords.x][coords.y].show = true;
     RevealTile(array, { x: coords.x - 1, y: coords.y - 1 });
     RevealTile(array, { x: coords.x - 1, y: coords.y });
@@ -32,19 +31,17 @@ export const RevealTile = (
     RevealTile(array, { x: coords.x + 1, y: coords.y });
     RevealTile(array, { x: coords.x + 1, y: coords.y + 1 });
   } else {
-    return array;
+     return array
   }
-  return array;
+   return array
 };
 
-const revealAll = (
-  array: {
-    marked: boolean;
-    show: boolean;
-    mine: boolean;
-    adjacentMines: number;
-  }[][]
-) => {
-  array.map((x) => x.map((y) => (y.show = true)));
+const revealAll = (array: Minefield[][]) => {
+  array.map((x) => x.map((y) => {
+    if(y.marked && y.mine){
+      return 
+    } else return y.show = true
+  }));
   return array;
 };
+export let mineHit: boolean = false

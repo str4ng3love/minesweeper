@@ -9,6 +9,7 @@ import { GenerateField } from "@/utils/GenerateField";
 import { AddClues } from "@/utils/AddClues";
 import { RevealTile } from "@/utils/ReavealTiles";
 import { mineHit } from "@/utils/ReavealTiles";
+import Panel from "./Panel";
 
 export interface Minefield {
   marked: boolean;
@@ -22,18 +23,19 @@ export default function Minefield(props: { options: Options }) {
   const [gameStart, setGameStart] = useState(false);
   const [mines, setMines] = useState(parseInt(props.options.mines));
   const [marked, setMarked] = useState(0);
-  const [time, setTime] = useState(0);
-  const [id, setId] = useState<NodeJS.Timer>();
   const [gameOver, setGameOver] = useState(false);
+  const [time, setTime]=useState(0)
+  const [intId, setIntId] =useState<NodeJS.Timer>()
+
   const Restart = (e: React.MouseEvent) => {
     const newMineField = GenerateField(props.options.x, props.options.y);
     setField(newMineField);
     setGameStart(false);
-    clearInterval(id);
-    setTime(0);
     setMines(parseInt(props.options.mines));
     setMarked(0);
     setGameOver(false);
+    clearInterval(intId)
+    setTime(0)
   };
   const startGame = (e: React.MouseEvent) => {
     let currentCoords = GetCoords(e);
@@ -43,10 +45,10 @@ export default function Minefield(props: { options: Options }) {
     );
     setField(newField);
     setGameStart(true);
-    const intervalId = setInterval(() => {
-      setTime((prev) => (prev += 1));
-    }, 2000);
-    setId(intervalId);
+    let id = setInterval(()=>{
+      setTime(prev=>prev +=1)
+    }, 1000)
+      setIntId(id)
   };
   // add logic after the game has started here
   //
@@ -106,50 +108,32 @@ export default function Minefield(props: { options: Options }) {
       return false;
     }
   };
+ 
   useEffect(() => {
 
     setGameStart(false);
-
+    clearInterval(intId)
   }, [props]);
-  useEffect(() => {
-    if (time === 999) {
-      clearInterval(id);
-    }
-    console.log('time')
-  }, [time]);
+
   useEffect(() => {
     if (checkGameState(field)) {
-      clearInterval(id);
+        clearInterval(intId)
     }
-    console.log('marked, field')
+    
   }, [marked, field]);
   useEffect(() => {
     if (gameOver) {
-      clearInterval(id);
+        clearInterval(intId)
     }
-    console.log('go')
+    
   }, [gameOver]);
+
   return (
     <div
       onContextMenu={(e) => e.preventDefault()}
       className="bg-slate-400 m-1 flex flex-col items-center border-2 border-solid border-b-stone-700 border-r-stone-700  border-l-stone-200  border-t-stone-200 pb-8"
     >
-       <div className="p-4 flex justify-between select-none">
-        
-        <div className="flex justify-center items-center  h-8 w-16  mx-1 border-solid border-2 border-red-600 bg-black text-white/90">
-   {time}
- </div>
-    
-     <div
-       onClick={(e) => Restart(e)}
-       className="flex justify-center items-center h-8 w-fit mx-4 "
-     >
-       RESET
-     </div>
-     <div className="flex justify-center items-center  h-8 w-16  mx-1 border-solid border-2 border-red-600 bg-black text-white/90">
-       {mines - marked}
-     </div>
-   </div>
+<Panel time={time} minesLeft={mines - marked} resetFN={Restart}/>
       <div
         className={`grid w-fit m-1 grid-cols-[repeat(${props.options.x},16px)] p-1  border-2 border-solid border-b-stone-700 border-r-stone-700  border-l-stone-200  border-t-stone-200`}
       >

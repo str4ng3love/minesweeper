@@ -4,6 +4,7 @@ export const GetCoords = (e: React.MouseEvent) => {
     let yRegex = currentTile.slice(4, 9).match(/[0-9]/g);
     let x;
     let y;
+
     if (xRegex?.length === 2) {
       x = xRegex[0] + xRegex[1];
     }
@@ -18,5 +19,6 @@ export const GetCoords = (e: React.MouseEvent) => {
     }
 
     let currentCoords = { x: parseInt(x as string), y: parseInt(y as string) };
+  
     return currentCoords;
   };

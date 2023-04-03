@@ -26,10 +26,7 @@ export default function Tile(props: {
             if (props.marked) {
               return;
             }
-            if (props.mine) {
-              console.log('mine')
-            setBg('bg-emerald-400')
-            }
+         
             props.handleClick(e);
           }}
           onContextMenu={(e) => {
@@ -44,7 +41,13 @@ export default function Tile(props: {
           {props.marked ? <span>M</span> : <span></span>}
         </div>
       ) : (
-        <div className="font-bold text-sm select-none flex justify-center items-center border-solid  bg-red-300 h-4 w-4 border-[1px] border-black ">
+        <div
+        onContextMenu={(e) => {
+          e.preventDefault();
+          props.handleRightClick(e);
+        }}
+        className="font-bold text-sm select-none flex justify-center items-center border-solid  bg-red-300 h-4 w-4 border-[1px] border-black 
+        ">
           <span className="absolute invisible">
             x:{props.coords.x} y:{props.coords.y}
           </span>

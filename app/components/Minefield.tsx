@@ -2,7 +2,7 @@
 
 import { Options } from "./Game";
 import Tile from "./Tile";
-import { useEffect, useState, useRef } from "react";
+import { useEffect, useState } from "react";
 import { SpawnMines } from "@/utils/SpawnMines";
 import { GetCoords } from "@/utils/GetMatrixCoords";
 import { GenerateField } from "@/utils/GenerateField";
@@ -19,13 +19,15 @@ export interface Minefield {
 }
 
 export default function Minefield(props: { options: Options }) {
-  const [field, setField] = useState<Minefield[][]>(GenerateField(props.options.x, props.options.y));
+  const [field, setField] = useState<Minefield[][]>(
+    GenerateField(props.options.x, props.options.y)
+  );
   const [gameStart, setGameStart] = useState(false);
   const [mines, setMines] = useState(parseInt(props.options.mines));
   const [marked, setMarked] = useState(0);
   const [gameOver, setGameOver] = useState(false);
-  const [time, setTime]=useState(0)
-  const [intId, setIntId] =useState<NodeJS.Timer>()
+  const [time, setTime] = useState(0);
+  const [intId, setIntId] = useState<NodeJS.Timer>();
 
   const Restart = (e: React.MouseEvent) => {
     const newMineField = GenerateField(props.options.x, props.options.y);
@@ -34,21 +36,32 @@ export default function Minefield(props: { options: Options }) {
     setMines(parseInt(props.options.mines));
     setMarked(0);
     setGameOver(false);
-    clearInterval(intId)
-    setTime(0)
+    clearInterval(intId);
+    setTime(0);
   };
+  const Reset = () =>{
+    const newMineField = GenerateField(props.options.x, props.options.y);
+    setField(newMineField);
+    setGameStart(false);
+    setMines(parseInt(props.options.mines));
+    setMarked(0);
+    setGameOver(false);
+    clearInterval(intId);
+    setTime(0);
+  }
   const startGame = (e: React.MouseEvent) => {
     let currentCoords = GetCoords(e);
     let newField = RecursiveCheck(
       AddClues(SpawnMines(field, parseInt(props.options.mines), currentCoords)),
       currentCoords
     );
+
     setField(newField);
     setGameStart(true);
-    let id = setInterval(()=>{
-      setTime(prev=>prev +=1)
-    }, 1000)
-      setIntId(id)
+    let id = setInterval(() => {
+      setTime((prev) => (prev += 1));
+    }, 1000);
+    setIntId(id);
   };
   // add logic after the game has started here
   //
@@ -79,6 +92,7 @@ export default function Minefield(props: { options: Options }) {
         minefield[coords.x][coords.y].marked = true;
         setMarked((prev) => (prev += 1));
       }
+
       setField(minefield);
     }
   };
@@ -108,38 +122,44 @@ export default function Minefield(props: { options: Options }) {
       return false;
     }
   };
- 
-  useEffect(() => {
 
+  useEffect(() => {
     setGameStart(false);
-    clearInterval(intId)
+    clearInterval(intId);
+    Reset()
   }, [props]);
 
   useEffect(() => {
     if (checkGameState(field)) {
-        clearInterval(intId)
+      clearInterval(intId);
     }
-    
   }, [marked, field]);
   useEffect(() => {
     if (gameOver) {
-        clearInterval(intId)
+      clearInterval(intId);
     }
-    
   }, [gameOver]);
+  // necessary evil
+  let mineZone = document.getElementById('mine-Field-Zone')
+  if(mineZone){
+  mineZone.style.gridTemplateColumns = `repeat(${props.options.y}, 16px)`
+
+}
 
   return (
     <div
       onContextMenu={(e) => e.preventDefault()}
       className="bg-slate-400 m-1 flex flex-col items-center border-2 border-solid border-b-stone-700 border-r-stone-700  border-l-stone-200  border-t-stone-200 pb-8"
     >
-<Panel time={time} minesLeft={mines - marked} resetFN={Restart}/>
+      <Panel time={time} minesLeft={mines - marked} resetFN={Restart} />
       <div
-        className={`grid w-fit m-1 grid-cols-[repeat(${props.options.x},16px)] p-1  border-2 border-solid border-b-stone-700 border-r-stone-700  border-l-stone-200  border-t-stone-200`}
+      id={'mine-Field-Zone'}
+        className={`grid w-fit m-1  p-1  border-2 border-solid border-b-stone-700 border-r-stone-700  border-l-stone-200  border-t-stone-200`}
       >
         {field ? (
           <>
             {!gameStart
+          
               ? field.map((el, indexX) =>
                   el.map((el, indexY) => (
                     <Tile
@@ -179,6 +199,7 @@ export default function Minefield(props: { options: Options }) {
           <></>
         )}
       </div>
+      <button onClick={(e) => console.log(field)}>check</button>
     </div>
   );
 }

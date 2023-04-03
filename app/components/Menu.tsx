@@ -10,6 +10,7 @@ export default function Menu(props:{getOptions:(options:{x:string, y:string,mine
       
     }
     useEffect(()=>{
+
         props.getOptions(gameOptions)
     }, [gameOptions])
 return(
@@ -18,7 +19,7 @@ return(
       Game
     </div>
     {showOptions ? <GameOptions closefN={(e)=>setShowOptions(false)} setOptionsfN={getOptions}/> : <></>}
-    <div className="p-4">help</div>
+    <div className="p-4">Help</div>
   </div>
 )
 }

@@ -9,17 +9,17 @@ export const RevealTile = (
     coords.y > array[0].length - 1 ||
     coords.y < 0
   ) {
-    return array
+    return array;
   }
   if (array[coords.x][coords.y].mine === true) {
     revealAll(array);
-    mineHit = true
-    return array
+    mineHit = true;
+    return array;
   } else if (array[coords.x][coords.y].marked === true) {
-     return array
+    return array;
   } else if (array[coords.x][coords.y].adjacentMines > 0) {
     array[coords.x][coords.y].show = true;
-     return array
+    return array;
   } else if (array[coords.x][coords.y].show === false) {
     array[coords.x][coords.y].show = true;
     RevealTile(array, { x: coords.x - 1, y: coords.y - 1 });
@@ -31,17 +31,17 @@ export const RevealTile = (
     RevealTile(array, { x: coords.x + 1, y: coords.y });
     RevealTile(array, { x: coords.x + 1, y: coords.y + 1 });
   } else {
-     return array
+    return array;
   }
-   return array
+  return array;
 };
 
 const revealAll = (array: Minefield[][]) => {
-  array.map((x) => x.map((y) => {
-    if(y.marked && y.mine){
-      return 
-    } else return y.show = true
-  }));
+  array.map((x) =>
+    x.map((y) => {
+      return (y.show = true);
+    })
+  );
   return array;
 };
-export let mineHit: boolean = false
+export let mineHit: boolean = false;

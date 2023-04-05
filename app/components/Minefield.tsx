@@ -10,6 +10,7 @@ import { AddClues } from "@/utils/AddClues";
 import { RevealTile } from "@/utils/ReavealTiles";
 import { mineHit } from "@/utils/ReavealTiles";
 import Panel from "./Panel";
+import GameOver from "./GameOver";
 
 export interface Minefield {
   marked: boolean;
@@ -28,6 +29,7 @@ export default function Minefield(props: { options: Options }) {
   const [gameOver, setGameOver] = useState(false);
   const [time, setTime] = useState(0);
   const [intId, setIntId] = useState<NodeJS.Timer>();
+  const [showGameOver, setShowGameOver] = useState(false)
 
   const Restart = (e: React.MouseEvent) => {
     const newMineField = GenerateField(props.options.x, props.options.y);
@@ -39,7 +41,7 @@ export default function Minefield(props: { options: Options }) {
     clearInterval(intId);
     setTime(0);
   };
-  const Reset = () =>{
+  const Reset = () => {
     const newMineField = GenerateField(props.options.x, props.options.y);
     setField(newMineField);
     setGameStart(false);
@@ -48,7 +50,7 @@ export default function Minefield(props: { options: Options }) {
     setGameOver(false);
     clearInterval(intId);
     setTime(0);
-  }
+  };
   const startGame = (e: React.MouseEvent) => {
     let currentCoords = GetCoords(e);
     let newField = RecursiveCheck(
@@ -74,6 +76,7 @@ export default function Minefield(props: { options: Options }) {
     newMineField = RevealTile(newMineField, coords);
     if (mineHit) {
       setGameOver(true);
+     
     }
     return newMineField;
   };
@@ -126,12 +129,13 @@ export default function Minefield(props: { options: Options }) {
   useEffect(() => {
     setGameStart(false);
     clearInterval(intId);
-    Reset()
+    Reset();
   }, [props]);
 
   useEffect(() => {
     if (checkGameState(field)) {
       clearInterval(intId);
+      setShowGameOver(true)
     }
   }, [marked, field]);
   useEffect(() => {
@@ -140,26 +144,24 @@ export default function Minefield(props: { options: Options }) {
     }
   }, [gameOver]);
   // necessary evil
-  let mineZone = document.getElementById('mine-Field-Zone')
-  if(mineZone){
-  mineZone.style.gridTemplateColumns = `repeat(${props.options.y}, 16px)`
-
-}
+  let mineZone = document.getElementById("mine-Field-Zone");
+  if (mineZone) {
+    mineZone.style.gridTemplateColumns = `repeat(${props.options.y}, 16px)`;
+  }
 
   return (
     <div
       onContextMenu={(e) => e.preventDefault()}
-      className="bg-slate-400 m-1 flex flex-col items-center border-2 border-solid border-b-stone-700 border-r-stone-700  border-l-stone-200  border-t-stone-200 pb-8"
+      className="shadow-lg shadow-black  bg-slate-400 m-1 flex flex-col p-4 items-center border-2 border-solid border-b-stone-700 border-r-stone-700  border-l-stone-200  border-t-stone-200 pb-8"
     >
       <Panel time={time} minesLeft={mines - marked} resetFN={Restart} />
       <div
-      id={'mine-Field-Zone'}
+        id={"mine-Field-Zone"}
         className={`grid w-fit m-1  p-1  border-2 border-solid border-b-stone-700 border-r-stone-700  border-l-stone-200  border-t-stone-200`}
       >
         {field ? (
           <>
             {!gameStart
-          
               ? field.map((el, indexX) =>
                   el.map((el, indexY) => (
                     <Tile
@@ -198,8 +200,8 @@ export default function Minefield(props: { options: Options }) {
         ) : (
           <></>
         )}
+        {showGameOver ? <GameOver handleClick={(e)=>{setShowGameOver(false)}} time={time}/> : <></>}
       </div>
-      <button onClick={(e) => console.log(field)}>check</button>
     </div>
   );
 }

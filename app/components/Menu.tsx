@@ -14,12 +14,12 @@ export default function Menu(props:{getOptions:(options:{x:string, y:string,mine
         props.getOptions(gameOptions)
     }, [gameOptions])
 return(
-    <div className="flex justify-around my-2">
-    <div onClick={(e)=>setShowOptions(true)} className="p-4 hover:bg-black hover:text-white">
+    <div className="flex justify-around my-2  ">
+    <div onClick={(e)=>setShowOptions(true)} className="p-4 hover:bg-black hover:text-white font-bold">
       Game
     </div>
     {showOptions ? <GameOptions closefN={(e)=>setShowOptions(false)} setOptionsfN={getOptions}/> : <></>}
-    <div className="p-4">Help</div>
+    <div className="p-4 font-bold">Help</div>
   </div>
 )
 }

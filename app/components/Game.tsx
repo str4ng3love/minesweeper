@@ -1,7 +1,7 @@
 "use client";
 import Menu from "./Menu";
 import Minefield from "./Minefield";
-import { useEffect, useState } from "react";
+import { useState } from "react";
 export interface Options {
   x: string;
   y: string;
@@ -15,9 +15,9 @@ export default function Game() {
 
   return (
     <>
-      <div className="flex flex-col max-w-fit">
+      <div className="flex z-10 flex-col max-w-fit ">
         <Menu getOptions={getOptions} />
-        {gameOptions ?  <Minefield options={gameOptions as Options} /> :<>Loading...</>}
+        {gameOptions ?  <Minefield options={gameOptions as Options} /> :<span className="my-16 text-4xl text-center animate-pulse font-bold">Loading...</span>}
        
       </div>
     </>

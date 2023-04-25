@@ -13,8 +13,6 @@ export default function Tile(props: {
   handleClick: (e: React.MouseEvent) => void;
   handleRightClick: (e: React.MouseEvent) => void;
 }) {
-
-
   return (
     <>
       {!props.show ? (
@@ -25,7 +23,6 @@ export default function Tile(props: {
             }
 
             props.handleClick(e);
-         
           }}
           onContextMenu={(e) => {
             e.preventDefault();

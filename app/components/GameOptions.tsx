@@ -23,7 +23,7 @@ export default function GameOptions(props:{closefN:(e: React.MouseEvent)=>void, 
           >
             →
           </button>
-        </div>{" "}
+        </div>
         <div className="flex justify-between">
           <span className="p-1 w-[6rem] font-bold">Advanced</span>
           <span className="p-1 w-[6rem]">16 x 16</span>
@@ -54,64 +54,7 @@ export default function GameOptions(props:{closefN:(e: React.MouseEvent)=>void, 
             →
           </button>
         </div>
-        <div className="flex justify-between">
-          <span className="p-1 w-[6rem] font-bold">Custom</span>
-          <div className="p-1 w-[6rem]">
-            <div className="flex">
-              <input
-                onChange={(e) => {
-                  if (e.currentTarget.value.match(/[^0-9]/)) {
-                    return;
-                  }
-                  setOptionsX(e.currentTarget.value);
-                }}
-                value={optionsX}
-                className="bg-black text-white w-[2ch] text-center"
-                type="text"
-                maxLength={2}
-              />
-              <span className="whitespace-pre-wrap"> x </span>
-              <input
-                onChange={(e) => {
-                  if (e.currentTarget.value.match(/[^0-9]/)) {
-                    return;
-                  }
-                  setOptionsY(e.currentTarget.value);
-                }}
-                value={optionsY}
-                className=" bg-black text-white w-[2ch] text-center"
-                type="text"
-                maxLength={2}
-              />
-            </div>
-          </div>
-          <span className="p-1 w-[6rem]">
-            {" "}
-            <input
-              onChange={(e) => {
-                if (e.currentTarget.value.match(/[^0-9]/)) {
-                  return;
-                }
-                setMines(e.currentTarget.value);
-              }}
-              value={mines}
-              className="bg-black text-white w-[2ch] text-center"
-              type="text"
-              maxLength={2}
-            />{" "}
-            mines
-          </span>
-          <button
-           onClick={(e)=>{
-            props.setOptionsfN({x:optionsX, y:optionsY, mines})
-            props.closefN(e)
-          }}
-            className="p-1 align-middle hover:bg-black hover:text-white px-2 font-bold"
-            type="button"
-          >
-            →
-          </button>
-        </div>
+        
         <button
         onClick={props.closefN}
           className=" mt-4 p-1 align-middle hover:bg-black hover:text-white px-2 font-bold"

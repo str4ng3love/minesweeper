@@ -7,8 +7,7 @@ import { SpawnMines } from "@/utils/SpawnMines";
 import { GetCoords } from "@/utils/GetMatrixCoords";
 import { GenerateField } from "@/utils/GenerateField";
 import { AddClues } from "@/utils/AddClues";
-import { RevealTile } from "@/utils/ReavealTiles";
-import { mineHit } from "@/utils/ReavealTiles";
+import { mineHit, ResetMineHit, RevealTile } from "@/utils/ReavealTiles";
 import Panel from "./Panel";
 import GameOver from "./GameOver";
 
@@ -29,9 +28,10 @@ export default function Minefield(props: { options: Options }) {
   const [gameOver, setGameOver] = useState(false);
   const [time, setTime] = useState(0);
   const [intId, setIntId] = useState<NodeJS.Timer>();
-  const [showGameOver, setShowGameOver] = useState(false)
+  const [showGameOver, setShowGameOver] = useState(false);
 
   const Restart = (e: React.MouseEvent) => {
+    ResetMineHit();
     const newMineField = GenerateField(props.options.x, props.options.y);
     setField(newMineField);
     setGameStart(false);
@@ -42,6 +42,7 @@ export default function Minefield(props: { options: Options }) {
     setTime(0);
   };
   const Reset = () => {
+    ResetMineHit();
     const newMineField = GenerateField(props.options.x, props.options.y);
     setField(newMineField);
     setGameStart(false);
@@ -61,7 +62,8 @@ export default function Minefield(props: { options: Options }) {
     setField(newField);
     setGameStart(true);
     let id = setInterval(() => {
-      setTime((prev) => (prev += 1));
+  
+      setTime(prev=> prev+=1)
     }, 1000);
     setIntId(id);
   };
@@ -74,9 +76,9 @@ export default function Minefield(props: { options: Options }) {
     let newMineField = [...minefield];
 
     newMineField = RevealTile(newMineField, coords);
+
     if (mineHit) {
       setGameOver(true);
-     
     }
     return newMineField;
   };
@@ -135,7 +137,7 @@ export default function Minefield(props: { options: Options }) {
   useEffect(() => {
     if (checkGameState(field)) {
       clearInterval(intId);
-      setShowGameOver(true)
+      setShowGameOver(true);
     }
   }, [marked, field]);
   useEffect(() => {
@@ -200,7 +202,16 @@ export default function Minefield(props: { options: Options }) {
         ) : (
           <></>
         )}
-        {showGameOver ? <GameOver handleClick={(e)=>{setShowGameOver(false)}} time={time}/> : <></>}
+        {showGameOver ? (
+          <GameOver
+            handleClick={(e) => {
+              setShowGameOver(false);
+            }}
+            time={time}
+          />
+        ) : (
+          <></>
+        )}
       </div>
     </div>
   );

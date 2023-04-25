@@ -45,3 +45,6 @@ const revealAll = (array: Minefield[][]) => {
   return array;
 };
 export let mineHit: boolean = false;
+export const ResetMineHit = () =>{
+    mineHit = false
+} 

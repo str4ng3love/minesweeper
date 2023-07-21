@@ -73,9 +73,9 @@ export default function Minefield(props: { options: Options }) {
     minefield: Minefield[][],
     coords: { x: number; y: number }
   ) => {
-    let newMineField = [...minefield];
+    
 
-    newMineField = RevealTile(newMineField, coords);
+    let newMineField = RevealTile(minefield, coords);
 
     if (mineHit) {
       setGameOver(true);
